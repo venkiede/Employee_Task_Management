@@ -24,44 +24,20 @@ DATABASES = {
 }
 
 # -------------------------------------------------------------------
-# INSTALLED APPS
+# MIDDLEWARE (Explicitly ordered for Railway/CORS)
 # -------------------------------------------------------------------
 
-# Ensure corsheaders is installed
-if 'corsheaders' not in INSTALLED_APPS:
-    INSTALLED_APPS.insert(0, 'corsheaders')
-
-# -------------------------------------------------------------------
-# MIDDLEWARE
-# -------------------------------------------------------------------
-
-# Remove existing WhiteNoise middleware if already present
 MIDDLEWARE = [
-    mw for mw in MIDDLEWARE
-    if mw != 'whitenoise.middleware.WhiteNoiseMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# Remove existing CORS middleware if already present
-MIDDLEWARE = [
-    mw for mw in MIDDLEWARE
-    if mw != 'corsheaders.middleware.CorsMiddleware'
-]
-
-# Insert CORS middleware at top
-MIDDLEWARE.insert(0, 'corsheaders.middleware.CorsMiddleware')
-
-# Insert WhiteNoise after SecurityMiddleware
-try:
-    security_index = MIDDLEWARE.index(
-        'django.middleware.security.SecurityMiddleware'
-    )
-    MIDDLEWARE.insert(
-        security_index + 1,
-        'whitenoise.middleware.WhiteNoiseMiddleware'
-    )
-except ValueError:
-    # fallback if SecurityMiddleware missing
-    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 # -------------------------------------------------------------------
 # STATIC FILES
@@ -70,27 +46,12 @@ except ValueError:
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # -------------------------------------------------------------------
-# CORS & CSRF
+# CORS SETTINGS
 # -------------------------------------------------------------------
 
-# Allow all origins for testing
 CORS_ALLOW_ALL_ORIGINS = True
-
-# Explicit frontend origin (commented out temporarily)
-# CORS_ALLOWED_ORIGINS = [
-#     "https://athletic-comfort-production-bc5d.up.railway.app",
-# ]
-
-# Allow cookies/auth headers if needed
 CORS_ALLOW_CREDENTIALS = True
 
-# Trusted CSRF origins
-CSRF_TRUSTED_ORIGINS = [
-    "https://athletic-comfort-production-bc5d.up.railway.app",
-    "https://*.up.railway.app",
-]
-
-# Explicitly allow headers for JWT/Auth
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
@@ -103,7 +64,6 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-# Explicitly allow methods
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
@@ -111,6 +71,18 @@ CORS_ALLOW_METHODS = [
     "PATCH",
     "POST",
     "PUT",
+]
+
+CORS_PREFLIGHT_MAX_AGE = 86400
+APPEND_SLASH = False
+
+# -------------------------------------------------------------------
+# CSRF SETTINGS
+# -------------------------------------------------------------------
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://athletic-comfort-production-bc5d.up.railway.app",
+    "https://*.up.railway.app",
 ]
 
 # -------------------------------------------------------------------
