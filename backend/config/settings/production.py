@@ -20,6 +20,10 @@ DATABASES = {
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# CORS & CSRF
+CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.up.railway.app', cast=lambda v: [s.strip() for s in v.split(',')])
+
 
 # Security settings
 SECURE_BROWSER_XSS_FILTER = True
