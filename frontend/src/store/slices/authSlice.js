@@ -6,7 +6,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await api.post('auth/login/', credentials);
+      const response = await api.post('auth/login', credentials);
       const { user, tokens } = response.data.data;
       setTokens(tokens.access, tokens.refresh);
       return { user, tokens };
@@ -20,7 +20,7 @@ export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await api.post('auth/register/', userData);
+      const response = await api.post('auth/register', userData);
       const { user, tokens } = response.data.data;
       setTokens(tokens.access, tokens.refresh);
       return { user, tokens };
@@ -34,7 +34,7 @@ export const fetchProfile = createAsyncThunk(
   'auth/fetchProfile',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('auth/profile/');
+      const response = await api.get('auth/profile');
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -48,7 +48,7 @@ export const logoutUser = createAsyncThunk(
     try {
       const refresh = localStorage.getItem('refresh_token');
       if (refresh) {
-        await api.post('auth/logout/', { refresh });
+        await api.post('auth/logout', { refresh });
       }
       removeTokens();
       return true;

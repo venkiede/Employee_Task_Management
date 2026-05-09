@@ -73,11 +73,13 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # CORS & CSRF
 # -------------------------------------------------------------------
 
-# Explicit frontend origin
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "https://athletic-comfort-production-bc5d.up.railway.app",
-]
+# Allow all origins for testing
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Explicit frontend origin (commented out temporarily)
+# CORS_ALLOWED_ORIGINS = [
+#     "https://athletic-comfort-production-bc5d.up.railway.app",
+# ]
 
 # Allow cookies/auth headers if needed
 CORS_ALLOW_CREDENTIALS = True
