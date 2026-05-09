@@ -49,6 +49,9 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
     serializer_class = LoginSerializer
 
+    def options(self, request, *args, **kwargs):
+        return success_response(message="OPTIONS allowed")
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
