@@ -7,11 +7,17 @@
     "backend": {
       "source": {
         "root": "backend"
+      },
+      "deploy": {
+        "startCommand": "python init_db.py && gunicorn config.wsgi --bind 0.0.0.0:$PORT"
       }
     },
     "frontend": {
       "source": {
         "root": "frontend"
+      },
+      "variables": {
+        "NIXPACKS_NODE_VERSION": "20"
       }
     }
   }
