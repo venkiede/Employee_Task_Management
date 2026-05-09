@@ -4,17 +4,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
 import os
+import django.conf as conf
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 def cors_debug(request):
-    import django.conf as conf
     return JsonResponse({
-        "DJANGO_SETTINGS_MODULE": os.environ.get('DJANGO_SETTINGS_MODULE'),
+        "SETTINGS_MODULE": os.environ.get('DJANGO_SETTINGS_MODULE'),
         "CORS_ALLOW_ALL_ORIGINS": getattr(conf.settings, 'CORS_ALLOW_ALL_ORIGINS', 'NOT SET'),
         "CORS_ALLOWED_ORIGINS": getattr(conf.settings, 'CORS_ALLOWED_ORIGINS', 'NOT SET'),
-        "MIDDLEWARE": conf.settings.MIDDLEWARE,
+        "MIDDLEWARE": list(conf.settings.MIDDLEWARE),
         "DEBUG": conf.settings.DEBUG,
-        "APPEND_SLASH": conf.settings.APPEND_SLASH,
     })
 
 urlpatterns = [
