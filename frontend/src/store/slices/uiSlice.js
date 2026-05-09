@@ -12,6 +12,7 @@ const getInitialTheme = () => {
 
 const initialState = {
   sidebarOpen: false,
+  sidebarCollapsed: false,
   theme: getInitialTheme(), // 'light' | 'dark'
 };
 
@@ -21,6 +22,9 @@ const uiSlice = createSlice({
   reducers: {
     toggleSidebar: (state) => {
       state.sidebarOpen = !state.sidebarOpen;
+    },
+    toggleSidebarCollapsed: (state) => {
+      state.sidebarCollapsed = !state.sidebarCollapsed;
     },
     setSidebarOpen: (state, action) => {
       state.sidebarOpen = action.payload;
@@ -48,5 +52,5 @@ const uiSlice = createSlice({
   },
 });
 
-export const { toggleSidebar, setSidebarOpen, toggleTheme, setTheme } = uiSlice.actions;
+export const { toggleSidebar, toggleSidebarCollapsed, setSidebarOpen, toggleTheme, setTheme } = uiSlice.actions;
 export default uiSlice.reducer;
