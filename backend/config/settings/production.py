@@ -10,8 +10,9 @@ ALLOWED_HOSTS = config(
     cast=lambda v: [s.strip() for s in v.split(',')]
 )
 
-# Database configuration
-# Use DATABASE_URL for Railway, fallback to sqlite for build time
+# -------------------------------------------------------------------
+# DATABASE
+# -------------------------------------------------------------------
 DATABASES = {
     'default': dj_database_url.config(
         default=config(
@@ -24,11 +25,11 @@ DATABASES = {
 }
 
 # -------------------------------------------------------------------
-# MIDDLEWARE (Explicitly ordered for Railway/CORS)
+# MIDDLEWARE — CorsMiddleware MUST be absolutely first
+# Redefine here to ensure correct order even if base.py changes
 # -------------------------------------------------------------------
-
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',              # ← MUST be #1
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -42,15 +43,18 @@ MIDDLEWARE = [
 # -------------------------------------------------------------------
 # STATIC FILES
 # -------------------------------------------------------------------
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # -------------------------------------------------------------------
 # CORS SETTINGS
+# Explicitly clear CORS_ALLOWED_ORIGINS from base.py so it does NOT
+# conflict with CORS_ALLOW_ALL_ORIGINS = True.
+# django-cors-headers skips origin checking when CORS_ALLOW_ALL_ORIGINS
+# is True, but having CORS_ALLOWED_ORIGINS set can cause confusion.
 # -------------------------------------------------------------------
-
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True           # Allow all origins in production
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = []               # Cleared — CORS_ALLOW_ALL_ORIGINS takes precedence
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -74,12 +78,13 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_PREFLIGHT_MAX_AGE = 86400
+CORS_URLS_REGEX = r'^.*$'              # Apply CORS to ALL URL patterns
+
 APPEND_SLASH = False
 
 # -------------------------------------------------------------------
 # CSRF SETTINGS
 # -------------------------------------------------------------------
-
 CSRF_TRUSTED_ORIGINS = [
     "https://athletic-comfort-production-bc5d.up.railway.app",
     "https://*.up.railway.app",
@@ -88,7 +93,6 @@ CSRF_TRUSTED_ORIGINS = [
 # -------------------------------------------------------------------
 # SECURITY SETTINGS
 # -------------------------------------------------------------------
-
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
@@ -104,7 +108,6 @@ SECURE_HSTS_PRELOAD = True
 # -------------------------------------------------------------------
 # EMAIL
 # -------------------------------------------------------------------
-
 EMAIL_BACKEND = config(
     'EMAIL_BACKEND',
     default='django.core.mail.backends.smtp.EmailBackend'
