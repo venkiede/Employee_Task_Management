@@ -22,6 +22,9 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
+    def options(self, request, *args, **kwargs):
+        return success_response(message="OPTIONS allowed")
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -92,6 +95,9 @@ class LogoutView(APIView):
     """Blacklist the refresh token to log the user out."""
 
     permission_classes = [IsAuthenticated]
+
+    def options(self, request, *args, **kwargs):
+        return success_response(message="OPTIONS allowed")
 
     def post(self, request):
         try:
