@@ -5,7 +5,7 @@ export const fetchTasks = createAsyncThunk(
   'tasks/fetchTasks',
   async (params, { rejectWithValue }) => {
     try {
-      const response = await api.get('/tasks/', { params });
+      const response = await api.get('tasks/', { params });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -17,7 +17,7 @@ export const fetchTaskById = createAsyncThunk(
   'tasks/fetchTaskById',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/tasks/${id}/`);
+      const response = await api.get(`tasks/${id}/`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -29,7 +29,7 @@ export const createTask = createAsyncThunk(
   'tasks/createTask',
   async (taskData, { rejectWithValue }) => {
     try {
-      const response = await api.post('/tasks/', taskData);
+      const response = await api.post('tasks/', taskData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -41,7 +41,7 @@ export const updateTask = createAsyncThunk(
   'tasks/updateTask',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await api.patch(`/tasks/${id}/`, data);
+      const response = await api.patch(`tasks/${id}/`, data);
       // Normalize: member updates return {success, data: task}, admin returns task directly
       return response.data.data || response.data;
     } catch (error) {
@@ -54,7 +54,7 @@ export const updateTaskStatus = createAsyncThunk(
   'tasks/updateTaskStatus',
   async ({ id, status }, { rejectWithValue }) => {
     try {
-      const response = await api.patch(`/tasks/${id}/`, { status });
+      const response = await api.patch(`tasks/${id}/`, { status });
       // Normalize: member updates return {success, data: task}, admin returns task directly
       return response.data.data || response.data;
     } catch (error) {
@@ -67,7 +67,7 @@ export const deleteTask = createAsyncThunk(
   'tasks/deleteTask',
   async (id, { rejectWithValue }) => {
     try {
-      await api.delete(`/tasks/${id}/`);
+      await api.delete(`tasks/${id}/`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

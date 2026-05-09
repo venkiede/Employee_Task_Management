@@ -1,14 +1,34 @@
 import axios from 'axios';
 import { getTokens, setTokens, removeTokens } from '../utils/storage';
 
+const getBaseURL = () => {
+  let url = import.meta.env.VITE_API_BASE_URL || '';
+  if (!url) return '/api/';
+  
+  // Ensure it starts with https://
+  if (url && !url.startsWith('http')) {
+    url = `https://${url}`;
+  }
+  
+  // Ensure it ends with /api/
+  if (url && !url.endsWith('/api') && !url.endsWith('/api/')) {
+    url = url.endsWith('/') ? `${url}api/` : `${url}/api/`;
+  } else if (url && !url.endsWith('/')) {
+    url = `${url}/`;
+  }
+  
+  return url;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL?.endsWith('/') 
-    ? import.meta.env.VITE_API_BASE_URL 
-    : `${import.meta.env.VITE_API_BASE_URL}/`,
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+console.log('Final API Base URL:', api.defaults.baseURL);
+
 
 
 // Request Interceptor: Attach access token

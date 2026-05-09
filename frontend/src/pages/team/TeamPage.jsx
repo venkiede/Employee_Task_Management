@@ -27,8 +27,8 @@ const TeamPage = () => {
     setLoading(true);
     try {
       const [activeRes, removedRes] = await Promise.all([
-        api.get('/team-members/'),
-        api.get('/team-members/removed/')
+        api.get('team-members/'),
+        api.get('team-members/removed/')
       ]);
       setActiveMembers(activeRes.data.results || activeRes.data);
       setRemovedMembers(removedRes.data.results || removedRes.data);
@@ -48,7 +48,7 @@ const TeamPage = () => {
   const handleAddMember = async (data) => {
     setIsSubmitting(true);
     try {
-      await api.post('/team-members/', data);
+      await api.post('team-members/', data);
       toast.success('Team member added successfully');
       setIsAddModalOpen(false);
       fetchData();
@@ -68,7 +68,7 @@ const TeamPage = () => {
   const confirmRemove = async () => {
     setIsSubmitting(true);
     try {
-      await api.patch(`/team-members/${selectedMember.id}/remove/`);
+      await api.patch(`team-members/${selectedMember.id}/remove/`);
       toast.success('Team member removed successfully');
       setIsRemoveModalOpen(false);
       fetchData();
@@ -81,7 +81,7 @@ const TeamPage = () => {
 
   const handleRestore = async (member) => {
     try {
-      await api.patch(`/team-members/${member.id}/restore/`);
+      await api.patch(`team-members/${member.id}/restore/`);
       toast.success('Team member restored successfully');
       fetchData();
     } catch (error) {
