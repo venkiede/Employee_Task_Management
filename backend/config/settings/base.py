@@ -207,6 +207,8 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://employe-task.up.railway.app",
+    "https://employe-task-frontend-production-101b.up.railway.app",
 ]
 
 # -------------------------------------------------------------------
