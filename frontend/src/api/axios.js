@@ -2,18 +2,23 @@ import axios from 'axios';
 import { getTokens, setTokens, removeTokens } from '../utils/storage';
 
 const getBaseURL = () => {
-  let url = import.meta.env.VITE_API_BASE_URL || '';
-  if (!url) return '/api/';
+  const envUrl = import.meta.env.VITE_API_BASE_URL || '';
   
-  // Ensure it starts with https://
-  if (url && !url.startsWith('http')) {
+  if (!envUrl || envUrl.startsWith('/')) {
+    return envUrl || '/api/';
+  }
+
+  let url = envUrl;
+  
+  // Ensure it starts with http/https if it looks like a domain
+  if (!url.startsWith('http')) {
     url = `https://${url}`;
   }
   
   // Ensure it ends with /api/
-  if (url && !url.endsWith('/api') && !url.endsWith('/api/')) {
+  if (!url.endsWith('/api') && !url.endsWith('/api/')) {
     url = url.endsWith('/') ? `${url}api/` : `${url}/api/`;
-  } else if (url && !url.endsWith('/')) {
+  } else if (!url.endsWith('/')) {
     url = `${url}/`;
   }
   
