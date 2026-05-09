@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME SYSTEM — CSS Custom Properties
+   Light theme = default, Dark theme = .dark class on <html>
+   Values are space-separated RGB for Tailwind opacity support
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Backgrounds */
+  --color-background: 245 247 251;     /* #F5F7FB */
+  --color-surface: 255 255 255;        /* #FFFFFF */
+  --color-elevated: 255 255 255;       /* #FFFFFF */
+  --color-muted-bg: 243 244 246;       /* #F3F4F6 */
+
+  /* Borders */
+  --color-border: 229 231 235;         /* #E5E7EB */
+  --color-border-subtle: 243 244 246;  /* #F3F4F6 */
+
+  /* Text */
+  --color-heading: 31 41 55;           /* #1F2937 */
+  --color-body: 55 65 81;              /* #374151 */
+  --color-subtle: 107 114 128;         /* #6B7280 */
+  --color-faint: 156 163 175;          /* #9CA3AF */
+
+  /* Brand Colors - Soft Blue & Light Lime */
+  --color-primary-400: 147 197 253;    /* blue-300 #93C5FD */
+  --color-primary-500: 96 165 250;     /* blue-400 #60A5FA */
+  --color-primary-600: 59 130 246;     /* blue-500 #3B82F6 */
+  
+  --color-accent-500: 163 230 53;      /* lime-400 #A3E635 */
+  
+  /* Status Colors */
+  --color-success-50: 240 253 244;     /* green-50 */
+  --color-success-500: 134 239 172;    /* light green #86EFAC */
+  
+  --color-warning-50: 255 237 213;     /* orange-50 */
+  --color-warning-500: 253 186 116;    /* light orange #FDBA74 */
+  
+  --color-danger-500: 252 165 165;     /* light red #FCA5A5 */
+
+  /* Scrollbar */
+  --scrollbar-track: 243 244 246;
+  --scrollbar-thumb: 209 213 219;
+  --scrollbar-thumb-hover: 156 163 175;
+
+  /* Recharts */
+  --chart-bg: #ffffff;
+  --chart-border: #e5e7eb;
+  --chart-text: #6b7280;
+  --chart-grid: #f3f4f6;
+  --chart-cursor: #f9fafb;
+}
+
+html, body, #root {
+  @apply h-full antialiased;
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-heading));
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background-color: rgb(var(--scrollbar-track));
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgb(var(--scrollbar-thumb));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(var(--scrollbar-thumb-hover));
+}
+
+/* Smooth theme transition */
+*, *::before, *::after {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+}
