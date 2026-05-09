@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Menu, Search, Bell, LogOut, User, Sun, Moon } from 'lucide-react';
-import { toggleSidebar, toggleTheme } from '../../store/slices/uiSlice';
+import { Menu, Search, Bell, LogOut, User } from 'lucide-react';
+import { toggleSidebar } from '../../store/slices/uiSlice';
 import { logoutUser } from '../../store/slices/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../api/axios';
@@ -10,7 +10,6 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const { theme } = useSelector((state) => state.ui);
   const [unreadCount, setUnreadCount] = useState(0);
 
   // Fetch unread notification count
@@ -18,14 +17,12 @@ const Navbar = () => {
     const fetchUnreadCount = async () => {
       try {
         const response = await api.get('/notifications/unread-count/');
-        // UnreadCountView uses success_response, so data is wrapped
         setUnreadCount(response.data.data?.unread_count || 0);
       } catch (error) {
-        // Silently fail — the bell just won't show a badge
+        // Silently fail
       }
     };
     fetchUnreadCount();
-    // Poll every 30 seconds for new notifications
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -45,7 +42,6 @@ const Navbar = () => {
           <Menu size={24} />
         </button>
         
-        {/* Optional Search Bar inside Navbar */}
         <div className="hidden sm:flex items-center bg-muted-bg rounded-lg px-3 py-1.5 border border-border-subtle focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 transition-all">
           <Search size={16} className="text-subtle" />
           <input 
@@ -57,14 +53,6 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center gap-3 sm:gap-5">
-        <button 
-          onClick={() => dispatch(toggleTheme())}
-          className="text-subtle hover:text-heading transition-colors p-2 rounded-full hover:bg-muted-bg"
-          title="Toggle Theme"
-        >
-          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-
         <Link to="/notifications" className="relative text-subtle hover:text-heading transition-colors p-2 rounded-full hover:bg-muted-bg">
           <Bell size={20} />
           {unreadCount > 0 && (
@@ -82,7 +70,6 @@ const Navbar = () => {
             <span className="text-xs text-subtle mt-1 capitalize">{user?.role}</span>
           </div>
           
-          {/* Avatar Dropdown wrapper */}
           <div className="relative group cursor-pointer">
             <div className="w-9 h-9 rounded-full bg-primary-600 flex items-center justify-center border-2 border-surface overflow-hidden">
               {user?.avatar ? (
@@ -94,7 +81,6 @@ const Navbar = () => {
               )}
             </div>
             
-            {/* Simple dropdown */}
             <div className="absolute right-0 top-full mt-2 w-48 bg-surface border border-border rounded-lg shadow-soft py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 origin-top-right z-50">
               <button onClick={() => navigate('/profile')} className="w-full text-left px-4 py-2 text-sm text-body hover:bg-muted-bg hover:text-heading flex items-center gap-2">
                 <User size={16} /> Profile
