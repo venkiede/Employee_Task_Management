@@ -1,6 +1,6 @@
-# Ether Tasks — Enterprise Team Task Manager
+# Employee Task Management System — Enterprise Team Task Manager
 
-Ether Tasks is a professional, full-stack SaaS platform designed for high-performing teams to manage projects, tasks, and team collaboration with an elegant, modern light-themed interface.
+Employee Task Management System is a professional, full-stack SaaS platform designed for high-performing teams to manage projects, tasks, and team collaboration with an elegant, modern light-themed interface.
 
 ![Dashboard Preview](https://via.placeholder.com/1200x600.png?text=Ether+Tasks+Dashboard+Preview)
 

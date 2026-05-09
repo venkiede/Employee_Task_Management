@@ -44,7 +44,9 @@ const Sidebar = () => {
             <span className="text-white font-bold text-lg">E</span>
           </div>
           {!sidebarCollapsed && (
-            <span className="text-xl font-bold text-heading tracking-tight whitespace-nowrap animate-in fade-in duration-500">Ether</span>
+            <span className="text-sm font-bold text-heading tracking-tight whitespace-nowrap animate-in fade-in duration-500">
+              Employee Task Management System
+            </span>
           )}
         </div>
       </div>
@@ -76,7 +78,7 @@ const Sidebar = () => {
           ))}
         </nav>
 
-        <div className="mt-auto space-y-4">
+        <div className="mt-auto space-y-2">
           <NavLink
             to="/profile"
             className={({ isActive }) => `
@@ -98,13 +100,22 @@ const Sidebar = () => {
             )}
           </NavLink>
 
-          {/* Desktop Collapse Toggle */}
+          {/* Desktop Collapse Toggle - Moved below Profile Settings */}
           <button
             onClick={() => dispatch(toggleSidebarCollapsed())}
-            className="hidden lg:flex items-center justify-center w-8 h-8 rounded-full bg-surface border border-border text-subtle hover:text-heading hover:bg-muted-bg absolute -right-8 top-1/2 -translate-y-1/2 shadow-sm z-50 transition-all hover:scale-110 active:scale-95"
+            className={`
+              flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all font-medium text-sm w-full
+              text-subtle hover:bg-muted-bg hover:text-heading active:scale-95
+              ${sidebarCollapsed ? 'justify-center px-0 w-12 mx-auto' : ''}
+            `}
             title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            <div className="shrink-0">
+              {sidebarCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+            </div>
+            {!sidebarCollapsed && (
+              <span className="whitespace-nowrap animate-in slide-in-from-left-2 duration-300">Collapse Menu</span>
+            )}
           </button>
         </div>
       </div>

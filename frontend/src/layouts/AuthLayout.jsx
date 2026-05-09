@@ -14,7 +14,7 @@ const AuthLayout = () => {
             <div className="w-12 h-12 rounded-xl bg-primary-500 flex items-center justify-center shadow-soft">
               <span className="text-white font-bold text-2xl">E</span>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-heading">Ether Tasks</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-heading">Employee Task Management System</h1>
           </div>
           
           <h2 className="text-2xl font-semibold mb-4 text-body">
