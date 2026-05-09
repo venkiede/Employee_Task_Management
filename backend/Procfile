@@ -1,1 +1,1 @@
-web: DJANGO_SETTINGS_MODULE=config.settings.production gunicorn config.wsgi --bind 0.0.0.0:$PORT --log-file -
+web: python init_db.py && DJANGO_SETTINGS_MODULE=config.settings.production gunicorn config.wsgi --bind 0.0.0.0:$PORT --log-file -
