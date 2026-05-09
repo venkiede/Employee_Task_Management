@@ -22,8 +22,14 @@ MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # CORS & CSRF
-CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.up.railway.app', cast=lambda v: [s.strip() for s in v.split(',')])
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "https://athletic-comfort-production-bc5d.up.railway.app",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://athletic-comfort-production-bc5d.up.railway.app",
+    "https://*.up.railway.app",
+]
 
 
 # Security settings
