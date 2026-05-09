@@ -2,11 +2,14 @@ import axios from 'axios';
 import { getTokens, setTokens, removeTokens } from '../utils/storage';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL?.endsWith('/') 
+    ? import.meta.env.VITE_API_BASE_URL 
+    : `${import.meta.env.VITE_API_BASE_URL}/`,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
 
 // Request Interceptor: Attach access token
 api.interceptors.request.use(
