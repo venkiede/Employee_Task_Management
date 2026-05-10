@@ -3,14 +3,9 @@ from decouple import config, Csv
 import dj_database_url
 
 DEBUG = False
-print("DEBUG: Loading production.py settings...")
-print(f"DEBUG: ALLOWED_HOSTS = {['employeetaskmanagement-production-eab1.up.railway.app', 'employe-task.up.railway.app', '*']}")
+DEBUG = False
 
-ALLOWED_HOSTS = [
-    'employeetaskmanagement-production-eab1.up.railway.app',
-    'employe-task.up.railway.app',
-    '*'
-]
+ALLOWED_HOSTS = ['*']
 
 # -------------------------------------------------------------------
 # DATABASE
@@ -49,15 +44,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 # -------------------------------------------------------------------
 # CORS SETTINGS (Permissive mode for debugging)
 # -------------------------------------------------------------------
-print("DEBUG: CORS_ALLOW_ALL_ORIGINS = True")
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # Temporarily removed CORS_ALLOWED_ORIGINS as per Step 3 debug instructions
 # CORS_ALLOWED_ORIGINS = [...] 
-
-print(f"DEBUG: INSTALLED_APPS has corsheaders: {'corsheaders' in INSTALLED_APPS}")
-print(f"DEBUG: MIDDLEWARE top 2: {MIDDLEWARE[:2]}")
 
 CORS_ALLOW_HEADERS = [
     "accept",

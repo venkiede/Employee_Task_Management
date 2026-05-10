@@ -9,7 +9,7 @@
         "root": "backend"
       },
       "deploy": {
-        "startCommand": "python manage.py collectstatic --noinput && python init_db.py && gunicorn config.wsgi --bind 0.0.0.0:$PORT --log-level debug --log-file -"
+        "startCommand": "mkdir -p staticfiles && python manage.py collectstatic --noinput && python init_db.py && gunicorn config.wsgi --bind 0.0.0.0:$PORT --workers 2 --worker-class gthread --threads 4 --timeout 60 --log-level debug --log-file -"
       }
     },
     "frontend": {

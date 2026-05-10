@@ -23,9 +23,6 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
-    def options(self, request, *args, **kwargs):
-        return success_response(message="OPTIONS allowed")
-
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -53,9 +50,6 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
     serializer_class = LoginSerializer
 
-    def options(self, request, *args, **kwargs):
-        return success_response(message="OPTIONS allowed")
-
     def post(self, request):
         try:
             print("DEBUG: Login API HIT")
@@ -68,7 +62,7 @@ class LoginView(APIView):
             password = serializer.validated_data['password']
 
             print(f"DEBUG: Authenticating user: {email}")
-            user = authenticate(request, email=email, password=password)
+            user = authenticate(request, username=email, password=password)
 
             if user is None:
                 print("DEBUG: Authentication failed")
@@ -113,9 +107,6 @@ class LogoutView(APIView):
     """Blacklist the refresh token to log the user out."""
 
     permission_classes = [IsAuthenticated]
-
-    def options(self, request, *args, **kwargs):
-        return success_response(message="OPTIONS allowed")
 
     def post(self, request):
         try:
