@@ -1,5 +1,5 @@
 from .base import *
-from decouple import config
+from decouple import config, Csv
 import dj_database_url
 
 DEBUG = False
@@ -41,11 +41,19 @@ MIDDLEWARE = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # -------------------------------------------------------------------
-# CORS SETTINGS (Ultra Permissive)
+# CORS SETTINGS (Explicitly allowing production frontend)
 # -------------------------------------------------------------------
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = []
+
+# Get origins from environment or use defaults
+env_origins = config('CORS_ALLOWED_ORIGINS', default='', cast=Csv())
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://employe-task.up.railway.app",
+    "https://employe-task-frontend-production-101b.up.railway.app",
+] + list(env_origins)
 
 CORS_ALLOW_HEADERS = [
     "accept",
