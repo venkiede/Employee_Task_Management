@@ -64,13 +64,18 @@ const ProjectForm = ({ project, onClose }) => {
       } else {
         // Handle field specific errors from Django backend
         let errMsg = 'Operation failed';
-        if (action.payload?.errors) {
-            const errs = action.payload.errors;
-            const firstKey = Object.keys(errs)[0];
-            errMsg = `${firstKey}: ${errs[firstKey][0]}`;
-        } else if (action.payload?.message) {
-            errMsg = action.payload.message;
+        const payload = action.payload;
+        
+        if (payload?.errors) {
+            const firstKey = Object.keys(payload.errors)[0];
+            const errorVal = payload.errors[firstKey];
+            errMsg = Array.isArray(errorVal) ? `${firstKey}: ${errorVal[0]}` : `${firstKey}: ${errorVal}`;
+        } else if (payload?.message) {
+            errMsg = payload.message;
+        } else if (typeof payload === 'string') {
+            errMsg = payload;
         }
+        
         toast.error(errMsg);
       }
     } catch (error) {

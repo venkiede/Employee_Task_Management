@@ -5,7 +5,7 @@ export const fetchProjects = createAsyncThunk(
   'projects/fetchProjects',
   async (params, { rejectWithValue }) => {
     try {
-      const response = await api.get('projects', { params });
+      const response = await api.get('projects/', { params });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -17,7 +17,7 @@ export const fetchProjectById = createAsyncThunk(
   'projects/fetchProjectById',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await api.get(`projects/${id}`);
+      const response = await api.get(`projects/${id}/`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -29,7 +29,7 @@ export const createProject = createAsyncThunk(
   'projects/createProject',
   async (projectData, { rejectWithValue }) => {
     try {
-      const response = await api.post('projects', projectData);
+      const response = await api.post('projects/', projectData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -41,7 +41,7 @@ export const updateProject = createAsyncThunk(
   'projects/updateProject',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await api.patch(`projects/${id}`, data);
+      const response = await api.patch(`projects/${id}/`, data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -53,7 +53,7 @@ export const deleteProject = createAsyncThunk(
   'projects/deleteProject',
   async (id, { rejectWithValue }) => {
     try {
-      await api.delete(`projects/${id}`);
+      await api.delete(`projects/${id}/`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
