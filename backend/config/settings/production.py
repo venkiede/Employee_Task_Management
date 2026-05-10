@@ -4,9 +4,13 @@ import dj_database_url
 
 DEBUG = False
 print("DEBUG: Loading production.py settings...")
-print(f"DEBUG: ALLOWED_HOSTS = {['*']}")
+print(f"DEBUG: ALLOWED_HOSTS = {['employeetaskmanagement-production-eab1.up.railway.app', 'employe-task.up.railway.app', '*']}")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'employeetaskmanagement-production-eab1.up.railway.app',
+    'employe-task.up.railway.app',
+    '*'
+]
 
 # -------------------------------------------------------------------
 # DATABASE
@@ -40,7 +44,7 @@ MIDDLEWARE = [
 # -------------------------------------------------------------------
 # STATIC FILES
 # -------------------------------------------------------------------
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # -------------------------------------------------------------------
 # CORS SETTINGS (Permissive mode for debugging)
