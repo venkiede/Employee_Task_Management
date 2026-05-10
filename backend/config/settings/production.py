@@ -14,14 +14,15 @@ ALLOWED_HOSTS = ['*']
 # -------------------------------------------------------------------
 DATABASES = {
     'default': dj_database_url.config(
-        default=config(
-            'DATABASE_URL',
-            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
-        ),
+        default=config('DATABASE_URL', default=None),
         conn_max_age=600,
         conn_health_checks=True,
     )
 }
+
+db_url = config('DATABASE_URL', default='None')
+if db_url == 'None':
+    DATABASES['default'] = dj_database_url.config(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 
 # -------------------------------------------------------------------
 # MIDDLEWARE (Optimized for CORS)
