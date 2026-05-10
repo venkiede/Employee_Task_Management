@@ -3,6 +3,8 @@ from decouple import config, Csv
 import dj_database_url
 
 DEBUG = False
+print("DEBUG: Loading production.py settings...")
+print(f"DEBUG: ALLOWED_HOSTS = {['*']}")
 
 ALLOWED_HOSTS = ['*']
 
@@ -43,6 +45,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # -------------------------------------------------------------------
 # CORS SETTINGS (Permissive mode for debugging)
 # -------------------------------------------------------------------
+print("DEBUG: CORS_ALLOW_ALL_ORIGINS = True")
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
