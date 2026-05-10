@@ -21,14 +21,14 @@ DATABASES = {
 }
 
 # -------------------------------------------------------------------
-# MIDDLEWARE (Ultimate Order)
+# MIDDLEWARE (Optimized for CORS)
 # -------------------------------------------------------------------
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -41,19 +41,16 @@ MIDDLEWARE = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # -------------------------------------------------------------------
-# CORS SETTINGS (Explicitly allowing production frontend)
+# CORS SETTINGS (Permissive mode for debugging)
 # -------------------------------------------------------------------
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-# Get origins from environment or use defaults
-env_origins = config('CORS_ALLOWED_ORIGINS', default='', cast=Csv())
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000",
     "https://employe-task.up.railway.app",
-    "https://employe-task-frontend-production-101b.up.railway.app",
-] + list(env_origins)
+]
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -78,7 +75,7 @@ CORS_ALLOW_METHODS = [
 
 CORS_PREFLIGHT_MAX_AGE = 86400
 CORS_URLS_REGEX = r'^.*$'
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 # -------------------------------------------------------------------
 # CSRF SETTINGS
