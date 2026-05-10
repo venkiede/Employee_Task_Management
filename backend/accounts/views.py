@@ -45,62 +45,15 @@ class RegisterView(generics.CreateAPIView):
 
 
 class LoginView(APIView):
-    """Authenticate user and return JWT tokens."""
-
+    """Minimal LoginView for debugging 502 errors."""
     permission_classes = [AllowAny]
-    serializer_class = LoginSerializer
 
     def post(self, request):
-        try:
-            print("DEBUG: Login API HIT")
-            print(f"DEBUG: Request Data: {request.data}")
-            
-            serializer = LoginSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-
-            email = serializer.validated_data['email'].lower().strip()
-            password = serializer.validated_data['password']
-
-            print(f"DEBUG: Authenticating user: {email}")
-            user = authenticate(request, username=email, password=password)
-
-            if user is None:
-                print("DEBUG: Authentication failed")
-                return error_response(
-                    message="Invalid email or password.",
-                    status_code=status.HTTP_401_UNAUTHORIZED
-                )
-
-            if not user.is_active:
-                print(f"DEBUG: User {email} is inactive")
-                return error_response(
-                    message="Your account has been deactivated.",
-                    status_code=status.HTTP_403_FORBIDDEN
-                )
-
-            print(f"DEBUG: Login successful for user: {email}")
-            refresh = RefreshToken.for_user(user)
-            user_data = UserSerializer(user).data
-
-            return success_response(
-                data={
-                    'user': user_data,
-                    'tokens': {
-                        'access': str(refresh.access_token),
-                        'refresh': str(refresh),
-                    }
-                },
-                message="Login successful."
-            )
-        except Exception as e:
-            print("!!! LOGIN CRASH !!!")
-            print(f"Error Type: {type(e)}")
-            print(f"Error Message: {str(e)}")
-            traceback.print_exc()
-            return error_response(
-                message=f"Server Error: {str(e)}",
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        print("DEBUG: Minimal Login API HIT")
+        return Response({
+            "success": True,
+            "message": "Login API working (Minimal Test Mode)"
+        })
 
 
 class LogoutView(APIView):
