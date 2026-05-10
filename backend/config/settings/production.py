@@ -49,11 +49,11 @@ print("DEBUG: CORS_ALLOW_ALL_ORIGINS = True")
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://employe-task.up.railway.app",
-]
+# Temporarily removed CORS_ALLOWED_ORIGINS as per Step 3 debug instructions
+# CORS_ALLOWED_ORIGINS = [...] 
+
+print(f"DEBUG: INSTALLED_APPS has corsheaders: {'corsheaders' in INSTALLED_APPS}")
+print(f"DEBUG: MIDDLEWARE top 2: {MIDDLEWARE[:2]}")
 
 CORS_ALLOW_HEADERS = [
     "accept",
