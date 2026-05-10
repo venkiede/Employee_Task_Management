@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+import traceback
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -56,39 +57,56 @@ class LoginView(APIView):
         return success_response(message="OPTIONS allowed")
 
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            print("DEBUG: Login API HIT")
+            print(f"DEBUG: Request Data: {request.data}")
+            
+            serializer = LoginSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
 
-        email = serializer.validated_data['email'].lower().strip()
-        password = serializer.validated_data['password']
+            email = serializer.validated_data['email'].lower().strip()
+            password = serializer.validated_data['password']
 
-        user = authenticate(request, email=email, password=password)
+            print(f"DEBUG: Authenticating user: {email}")
+            user = authenticate(request, email=email, password=password)
 
-        if user is None:
-            return error_response(
-                message="Invalid email or password.",
-                status_code=status.HTTP_401_UNAUTHORIZED
+            if user is None:
+                print("DEBUG: Authentication failed")
+                return error_response(
+                    message="Invalid email or password.",
+                    status_code=status.HTTP_401_UNAUTHORIZED
+                )
+
+            if not user.is_active:
+                print(f"DEBUG: User {email} is inactive")
+                return error_response(
+                    message="Your account has been deactivated.",
+                    status_code=status.HTTP_403_FORBIDDEN
+                )
+
+            print(f"DEBUG: Login successful for user: {email}")
+            refresh = RefreshToken.for_user(user)
+            user_data = UserSerializer(user).data
+
+            return success_response(
+                data={
+                    'user': user_data,
+                    'tokens': {
+                        'access': str(refresh.access_token),
+                        'refresh': str(refresh),
+                    }
+                },
+                message="Login successful."
             )
-
-        if not user.is_active:
+        except Exception as e:
+            print("!!! LOGIN CRASH !!!")
+            print(f"Error Type: {type(e)}")
+            print(f"Error Message: {str(e)}")
+            traceback.print_exc()
             return error_response(
-                message="Your account has been deactivated.",
-                status_code=status.HTTP_403_FORBIDDEN
+                message=f"Server Error: {str(e)}",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-        refresh = RefreshToken.for_user(user)
-        user_data = UserSerializer(user).data
-
-        return success_response(
-            data={
-                'user': user_data,
-                'tokens': {
-                    'access': str(refresh.access_token),
-                    'refresh': str(refresh),
-                }
-            },
-            message="Login successful."
-        )
 
 
 class LogoutView(APIView):
