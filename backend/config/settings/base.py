@@ -11,7 +11,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-default-key-for-dev-only-change-this')
 
-DEBUG = config('DEBUG', default=True, cast=bool)
+def get_bool_setting(name, default=False):
+    try:
+        return config(name, default=default, cast=bool)
+    except ValueError:
+        raw_value = config(name, default=str(default))
+        return str(raw_value).strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+DEBUG = get_bool_setting('DEBUG', default=True)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 

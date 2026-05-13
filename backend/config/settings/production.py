@@ -2,31 +2,40 @@ from .base import *
 from decouple import config, Csv
 import dj_database_url
 
+
 DEBUG = False
-DEBUG = False
-print("DEBUG: Loading production.py settings...")
-print(f"DEBUG: INSTALLED_APPS has corsheaders: {'corsheaders' in INSTALLED_APPS}")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default=(
+        'localhost,127.0.0.1,'
+        'employe-task.up.railway.app,'
+        'employeetaskmanagement-production-eab1.up.railway.app'
+    ),
+    cast=Csv(),
+)
 
-# -------------------------------------------------------------------
-# DATABASE
-# -------------------------------------------------------------------
-DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL', default=None),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
 
-db_url = config('DATABASE_URL', default='None')
-if db_url == 'None':
-    DATABASES['default'] = dj_database_url.config(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
+# Database
+database_url = config('DATABASE_URL', default='')
+if database_url:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            database_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
-# -------------------------------------------------------------------
-# MIDDLEWARE (Optimized for CORS)
-# -------------------------------------------------------------------
+
+# Middleware
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -39,19 +48,22 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# -------------------------------------------------------------------
-# STATIC FILES
-# -------------------------------------------------------------------
+
+# Static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-# -------------------------------------------------------------------
-# CORS SETTINGS (Permissive mode for debugging)
-# -------------------------------------------------------------------
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
 
-# Temporarily removed CORS_ALLOWED_ORIGINS as per Step 3 debug instructions
-# CORS_ALLOWED_ORIGINS = [...] 
+# CORS / CSRF
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default=(
+        'https://employe-task.up.railway.app,'
+        'https://employeetaskmanagement-production-eab1.up.railway.app'
+    ),
+    cast=Csv(),
+)
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -75,36 +87,35 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_PREFLIGHT_MAX_AGE = 86400
-CORS_URLS_REGEX = r'^.*$'
+CORS_URLS_REGEX = r'^/api/.*$'
 APPEND_SLASH = True
 
-# -------------------------------------------------------------------
-# CSRF SETTINGS
-# -------------------------------------------------------------------
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.up.railway.app",
-    "https://employe-task.up.railway.app",
-    "https://employeetaskmanagement-production-eab1.up.railway.app",
-]
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default=(
+        'https://employe-task.up.railway.app,'
+        'https://employeetaskmanagement-production-eab1.up.railway.app'
+    ),
+    cast=Csv(),
+)
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
 
-# -------------------------------------------------------------------
-# SECURITY SETTINGS
-# -------------------------------------------------------------------
+
+# Security
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'None'
 X_FRAME_OPTIONS = 'DENY'
-
-# SECURE_SSL_REDIRECT = False (Let Railway handle HTTPS termination)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# -------------------------------------------------------------------
-# EMAIL
-# -------------------------------------------------------------------
-EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+
+# Email
+EMAIL_BACKEND = config(
+    'EMAIL_BACKEND',
+    default='django.core.mail.backends.smtp.EmailBackend'
+)
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
@@ -112,9 +123,8 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@taskmanager.com')
 
-# -------------------------------------------------------------------
-# LOGGING (Added for 502/Crash debugging)
-# -------------------------------------------------------------------
+
+# Logging
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -132,7 +142,7 @@ LOGGING = {
     },
     "root": {
         "handlers": ["console"],
-        "level": "DEBUG",
+        "level": "INFO",
     },
     "loggers": {
         "django": {
@@ -142,12 +152,12 @@ LOGGING = {
         },
         "django.request": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "INFO",
             "propagate": False,
         },
         "django.db.backends": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "WARNING",
             "propagate": False,
         },
     },
