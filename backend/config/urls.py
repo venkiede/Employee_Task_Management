@@ -3,9 +3,29 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
+from django.db import connections
+from django.db.utils import OperationalError
 import os
 import django.conf as conf
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
+
+def health_check(request):
+    database_ok = True
+
+    try:
+        connections['default'].ensure_connection()
+    except OperationalError:
+        database_ok = False
+
+    status_code = 200 if database_ok else 503
+    return JsonResponse({
+        "status": "ok" if database_ok else "error",
+        "service": "backend",
+        "database": "ok" if database_ok else "unavailable",
+        "settings_module": os.environ.get('DJANGO_SETTINGS_MODULE'),
+    }, status=status_code)
+
 
 def cors_debug(request):
     return JsonResponse({
@@ -18,7 +38,7 @@ def cors_debug(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('debug-cors/', cors_debug),
+    path('api/health/', health_check),
 
     # API endpoints
     path('api/auth/', include('accounts.urls')),
@@ -36,5 +56,6 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    urlpatterns += [path('debug-cors/', cors_debug)]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -3,13 +3,13 @@ import { getTokens, setTokens, removeTokens } from '../utils/storage';
 
 const getBaseURL = () => {
   const envUrl = import.meta.env.VITE_API_BASE_URL || '';
-  
+
   if (!envUrl || envUrl.startsWith('/')) {
     return envUrl || '/api/';
   }
 
   let url = envUrl;
-  
+
   // Ensure it starts with http/https if it looks like a domain
   if (!url.startsWith('http')) {
     url = `https://${url}`;
@@ -21,20 +21,28 @@ const getBaseURL = () => {
   } else if (!url.endsWith('/')) {
     url = `${url}/`;
   }
-  
+
   return url;
+};
+
+const joinApiPath = (path = '') => {
+  const baseUrl = getBaseURL();
+  const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+  return `${normalizedBase}${normalizedPath}`;
 };
 
 const api = axios.create({
   baseURL: getBaseURL(),
+  timeout: 20000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-console.log('Final API Base URL:', api.defaults.baseURL);
-
-
+if (import.meta.env.DEV) {
+  console.log('Final API Base URL:', api.defaults.baseURL);
+}
 
 // Request Interceptor: Attach access token
 api.interceptors.request.use(
@@ -55,14 +63,14 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // Avoid infinite loops
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const { refresh } = getTokens();
 
       if (refresh) {
         try {
-          const res = await axios.post(`${api.defaults.baseURL}/auth/refresh/`, {
+          const res = await axios.post(joinApiPath('auth/refresh/'), {
             refresh,
           });
 

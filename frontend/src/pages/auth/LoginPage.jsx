@@ -18,7 +18,7 @@ const LoginPage = () => {
   // Clear previous errors when component mounts
   useEffect(() => {
     dispatch(clearError());
-  }, []);
+  }, [dispatch]);
 
   const onSubmit = async (data) => {
     try {
@@ -29,7 +29,7 @@ const LoginPage = () => {
       } else {
         toast.error(resultAction.payload?.message || 'Login failed');
       }
-    } catch (err) {
+    } catch {
       toast.error('An unexpected error occurred');
     }
   };
@@ -43,7 +43,7 @@ const LoginPage = () => {
 
       {error && (
         <div className="mb-6 p-4 bg-danger-500/10 border border-danger-500/50 rounded-lg text-danger-500 text-sm">
-          {error.message || 'Invalid credentials'}
+          {error.message || 'Login failed'}
         </div>
       )}
 

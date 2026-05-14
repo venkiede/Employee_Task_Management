@@ -2,6 +2,37 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
 import { setTokens, removeTokens } from '../../utils/storage';
 
+const normalizeAuthError = (error, fallbackMessage) => {
+  if (!error.response) {
+    return {
+      message: 'Unable to reach the server. Check whether the Railway backend is running and the API URL is correct.',
+      status: 0,
+    };
+  }
+
+  const { status, data } = error.response;
+
+  if (status >= 500) {
+    return {
+      message: 'The server is unavailable right now. Please try again in a moment.',
+      status,
+    };
+  }
+
+  if (data && typeof data === 'object') {
+    return {
+      ...data,
+      status,
+      message: data.message || fallbackMessage,
+    };
+  }
+
+  return {
+    message: fallbackMessage || 'Request failed.',
+    status,
+  };
+};
+
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
@@ -11,7 +42,7 @@ export const loginUser = createAsyncThunk(
       setTokens(tokens.access, tokens.refresh);
       return { user, tokens };
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(normalizeAuthError(error, 'Login failed.'));
     }
   }
 );
@@ -25,7 +56,7 @@ export const registerUser = createAsyncThunk(
       setTokens(tokens.access, tokens.refresh);
       return { user, tokens };
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(normalizeAuthError(error, 'Registration failed.'));
     }
   }
 );
@@ -37,7 +68,7 @@ export const fetchProfile = createAsyncThunk(
       const response = await api.get('auth/profile/');
       return response.data.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(normalizeAuthError(error, 'Unable to fetch profile.'));
     }
   }
 );
@@ -54,7 +85,7 @@ export const logoutUser = createAsyncThunk(
       return true;
     } catch (error) {
       removeTokens(); // force remove locally anyway
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(normalizeAuthError(error, 'Logout failed.'));
     }
   }
 );
@@ -122,6 +153,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = false;
         state.user = null;
+        state.error = action.payload || null;
       })
       // Logout
       .addCase(logoutUser.fulfilled, (state) => {
@@ -131,6 +163,7 @@ const authSlice = createSlice({
       .addCase(logoutUser.rejected, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+        state.error = null;
       });
   },
 });
