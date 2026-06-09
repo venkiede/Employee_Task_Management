@@ -2,7 +2,33 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
 import { setTokens, removeTokens } from '../../utils/storage';
 
+const extractAuthPayload = (response) => {
+  const payload = response?.data?.data;
+  const contentType = String(response?.headers?.['content-type'] || '');
+
+  if (payload?.user && payload?.tokens?.access && payload?.tokens?.refresh) {
+    return payload;
+  }
+
+  const error = new Error(
+    contentType.includes('text/html')
+      ? 'The app reached the frontend shell instead of the API. Check the Railway API base URL.'
+      : 'The app received an unexpected response from the API.'
+  );
+
+  error.isInvalidApiResponse = true;
+  error.status = response?.status || 0;
+  throw error;
+};
+
 const normalizeAuthError = (error, fallbackMessage) => {
+  if (error?.isInvalidApiResponse) {
+    return {
+      message: error.message,
+      status: error.status || 0,
+    };
+  }
+
   if (!error.response) {
     return {
       message: 'Unable to reach the server. Check whether the Railway backend is running and the API URL is correct.',
@@ -38,7 +64,7 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await api.post('auth/login/', credentials);
-      const { user, tokens } = response.data.data;
+      const { user, tokens } = extractAuthPayload(response);
       setTokens(tokens.access, tokens.refresh);
       return { user, tokens };
     } catch (error) {
@@ -52,7 +78,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await api.post('auth/register/', userData);
-      const { user, tokens } = response.data.data;
+      const { user, tokens } = extractAuthPayload(response);
       setTokens(tokens.access, tokens.refresh);
       return { user, tokens };
     } catch (error) {

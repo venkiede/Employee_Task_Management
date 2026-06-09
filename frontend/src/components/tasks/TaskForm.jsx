@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { createTask, updateTask } from '../../store/slices/taskSlice';
-import { fetchProjects } from '../../store/slices/projectSlice';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
 
 import Input from '../common/Input';
 import Button from '../common/Button';
 
-const TaskForm = ({ task, onClose }) => {
+const TaskForm = ({ task, onClose, onSuccess }) => {
   const isEditing = !!task;
   const dispatch = useDispatch();
-  const { user } = useSelector(state => state.auth);
   
   const [projects, setProjects] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -84,6 +82,7 @@ const TaskForm = ({ task, onClose }) => {
 
       if (action.meta.requestStatus === 'fulfilled') {
         toast.success(`Task ${isEditing ? 'updated' : 'created'} successfully`);
+        await onSuccess?.();
         onClose();
       } else {
         let errMsg = 'Operation failed';

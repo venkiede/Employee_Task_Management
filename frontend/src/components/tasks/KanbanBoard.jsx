@@ -1,7 +1,7 @@
 import React from 'react';
 import TaskCard from './TaskCard';
 
-const KanbanBoard = ({ tasks }) => {
+const KanbanBoard = ({ tasks, onTaskStatusUpdated }) => {
   // Columns definition based on status
   const columns = [
     { id: 'todo', title: 'To Do', color: 'bg-muted-bg border-t-4 border-border-subtle' },
@@ -19,12 +19,12 @@ const KanbanBoard = ({ tasks }) => {
   };
 
   return (
-    <div className="flex flex-nowrap items-start gap-6 overflow-x-auto pb-6 h-full min-h-[500px] custom-scrollbar">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
       {columns.map(column => {
         const columnTasks = getTasksByStatus(column.id);
         
         return (
-          <div key={column.id} className={`flex flex-col min-w-[300px] w-[300px] rounded-xl border border-border shrink-0 ${column.color}`}>
+          <div key={column.id} className={`flex min-h-[280px] flex-col rounded-xl border border-border ${column.color}`}>
             <div className="p-4 flex justify-between items-center bg-surface/50 rounded-t-lg">
               <h3 className="font-semibold text-heading">{column.title}</h3>
               <span className="bg-border text-body text-xs font-bold px-2 py-1 rounded-full">
@@ -35,11 +35,16 @@ const KanbanBoard = ({ tasks }) => {
             <div className="flex-1 p-3 flex flex-col gap-3 min-h-[150px]">
               {columnTasks.length > 0 ? (
                 columnTasks.map(task => (
-                  <TaskCard key={task.id} task={task} isKanban={true} />
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    isKanban={true}
+                    onStatusUpdated={onTaskStatusUpdated}
+                  />
                 ))
               ) : (
                 <div className="flex-1 flex items-center justify-center border-2 border-dashed border-border-subtle rounded-lg p-6 text-center text-sm text-subtle">
-                  Drop tasks here
+                  No tasks in this stage
                 </div>
               )}
             </div>

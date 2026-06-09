@@ -1,6 +1,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
 
+const normalizeTaskPayload = async (payload) => {
+  const task = payload?.data || payload;
+
+  if (!task?.id || task.project_name) {
+    return task;
+  }
+
+  try {
+    const detailResponse = await api.get(`tasks/${task.id}/`);
+    return detailResponse.data;
+  } catch (error) {
+    return task;
+  }
+};
+
 export const fetchTasks = createAsyncThunk(
   'tasks/fetchTasks',
   async (params, { rejectWithValue }) => {
@@ -30,7 +45,7 @@ export const createTask = createAsyncThunk(
   async (taskData, { rejectWithValue }) => {
     try {
       const response = await api.post('tasks/', taskData);
-      return response.data;
+      return await normalizeTaskPayload(response.data);
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -42,8 +57,7 @@ export const updateTask = createAsyncThunk(
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await api.patch(`tasks/${id}/`, data);
-      // Normalize: member updates return {success, data: task}, admin returns task directly
-      return response.data.data || response.data;
+      return await normalizeTaskPayload(response.data);
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }

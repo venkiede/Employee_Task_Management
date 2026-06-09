@@ -1,4 +1,5 @@
 import django_filters
+from projects.models import Project
 from .models import Task
 
 
@@ -9,6 +10,10 @@ class TaskFilter(django_filters.FilterSet):
     status = django_filters.ChoiceFilter(choices=Task.Status.choices)
     priority = django_filters.ChoiceFilter(choices=Task.Priority.choices)
     project = django_filters.NumberFilter(field_name='project__id')
+    project_status = django_filters.ChoiceFilter(
+        field_name='project__status',
+        choices=Project.Status.choices
+    )
     assigned_to = django_filters.NumberFilter(field_name='assigned_to__id')
     deadline_before = django_filters.DateTimeFilter(field_name='deadline', lookup_expr='lte')
     deadline_after = django_filters.DateTimeFilter(field_name='deadline', lookup_expr='gte')
@@ -16,7 +21,7 @@ class TaskFilter(django_filters.FilterSet):
 
     class Meta:
         model = Task
-        fields = ['title', 'status', 'priority', 'project', 'assigned_to']
+        fields = ['title', 'status', 'priority', 'project', 'project_status', 'assigned_to']
 
     def filter_overdue(self, queryset, name, value):
         from django.utils import timezone

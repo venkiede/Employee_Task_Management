@@ -4,7 +4,7 @@ import { Calendar, User, FolderKanban } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateTaskStatus } from '../../store/slices/taskSlice';
 
-const TaskCard = ({ task, isKanban = false }) => {
+const TaskCard = ({ task, isKanban = false, onStatusUpdated }) => {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
   
@@ -24,11 +24,16 @@ const TaskCard = ({ task, isKanban = false }) => {
     overdue: 'text-danger-600 bg-danger-500/10',
   };
 
-  const handleStatusChange = (e) => {
+  const handleStatusChange = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (!canUpdate) return;
-    dispatch(updateTaskStatus({ id: task.id, status: e.target.value }));
+    const nextStatus = e.target.value;
+    const action = await dispatch(updateTaskStatus({ id: task.id, status: nextStatus }));
+
+    if (updateTaskStatus.fulfilled.match(action)) {
+      onStatusUpdated?.();
+    }
   };
 
   return (
@@ -75,7 +80,7 @@ const TaskCard = ({ task, isKanban = false }) => {
             onChange={handleStatusChange}
             value={task.status}
             disabled={!canUpdate}
-            className={`text-[10px] font-medium px-2 py-1 rounded-md border border-transparent cursor-pointer outline-none appearance-none ${statusColors[task.status]} ${!canUpdate && 'opacity-75 cursor-not-allowed'}`}
+            className={`text-[10px] font-medium px-2 py-1 rounded-md border border-transparent cursor-pointer outline-none appearance-none ${statusColors[task.status]} ${!canUpdate ? 'opacity-75 cursor-not-allowed' : ''}`}
           >
             <option value="todo">To Do</option>
             <option value="in_progress">In Progress</option>

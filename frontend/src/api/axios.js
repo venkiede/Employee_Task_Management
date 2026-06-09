@@ -1,14 +1,34 @@
 import axios from 'axios';
 import { getTokens, setTokens, removeTokens } from '../utils/storage';
 
-const getBaseURL = () => {
-  const envUrl = import.meta.env.VITE_API_BASE_URL || '';
+const RAILWAY_FRONTEND_HOSTS = new Set([
+  'employe-task.up.railway.app',
+  'employe-task-frontend-production-101b.up.railway.app',
+]);
 
-  if (!envUrl || envUrl.startsWith('/')) {
-    return envUrl || '/api/';
+const DEFAULT_RAILWAY_BACKEND_URL =
+  'https://employeetaskmanagement-production-eab1.up.railway.app';
+
+const getDefaultBaseURL = () => {
+  if (
+    typeof window !== 'undefined' &&
+    RAILWAY_FRONTEND_HOSTS.has(window.location.host)
+  ) {
+    return DEFAULT_RAILWAY_BACKEND_URL;
   }
 
-  let url = envUrl;
+  return '/api/';
+};
+
+const getBaseURL = () => {
+  const envUrl = (import.meta.env.VITE_API_BASE_URL || '').trim();
+  const rawUrl = envUrl || getDefaultBaseURL();
+
+  if (rawUrl.startsWith('/')) {
+    return rawUrl;
+  }
+
+  let url = rawUrl;
 
   // Ensure it starts with http/https if it looks like a domain
   if (!url.startsWith('http')) {

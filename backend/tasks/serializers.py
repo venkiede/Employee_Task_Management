@@ -8,6 +8,7 @@ class TaskListSerializer(serializers.ModelSerializer):
 
     assigned_to_name = serializers.CharField(source='assigned_to.full_name', read_only=True, default=None)
     project_name = serializers.CharField(source='project.name', read_only=True)
+    project_status = serializers.CharField(source='project.status', read_only=True)
     created_by_name = serializers.CharField(source='created_by.full_name', read_only=True)
     is_overdue = serializers.ReadOnlyField()
 
@@ -15,7 +16,7 @@ class TaskListSerializer(serializers.ModelSerializer):
         model = Task
         fields = [
             'id', 'title', 'description', 'priority', 'status', 'deadline',
-            'assigned_to', 'assigned_to_name', 'project', 'project_name',
+            'assigned_to', 'assigned_to_name', 'project', 'project_name', 'project_status',
             'created_by', 'created_by_name', 'is_overdue',
             'created_at', 'updated_at'
         ]
@@ -27,6 +28,7 @@ class TaskDetailSerializer(serializers.ModelSerializer):
     assigned_to_name = serializers.CharField(source='assigned_to.full_name', read_only=True, default=None)
     assigned_to_email = serializers.CharField(source='assigned_to.email', read_only=True, default=None)
     project_name = serializers.CharField(source='project.name', read_only=True)
+    project_status = serializers.CharField(source='project.status', read_only=True)
     created_by_name = serializers.CharField(source='created_by.full_name', read_only=True)
     is_overdue = serializers.ReadOnlyField()
 
@@ -35,7 +37,7 @@ class TaskDetailSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'description', 'priority', 'status', 'deadline',
             'assigned_to', 'assigned_to_name', 'assigned_to_email',
-            'project', 'project_name',
+            'project', 'project_name', 'project_status',
             'created_by', 'created_by_name', 'is_overdue',
             'created_at', 'updated_at'
         ]
